@@ -23,8 +23,8 @@ bool verifica_linha(string linha) {
         marcado como 1 no array.
     */
     for (int i = 0; i < 9; i++) {
-        int n = matriz[linha][i] - '0';
-        if (n < 1 || n > 9 || array[n - 1] == 1) {
+        int n = linha[i] - '0';
+        if (n < 1 || array[n - 1] == 1) {
             return false;
         }
         else
