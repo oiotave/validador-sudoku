@@ -1,12 +1,14 @@
 #include <iostream>
 #include <string>
 #include <thread>
+#include <future>
 #include <ctime>
 
 using namespace std;
 
 // Verifica se um jogo passado e valido
-bool verifica_linha(string linha) {
+bool verifica_linha(string linha)
+{
     /*
         Esse array funciona como um hash;
         a posicao n indica que o o numero n + 1 nao esta nele
@@ -22,15 +24,17 @@ bool verifica_linha(string linha) {
         se algum numero novo nao tiver sido lido ainda, ele sera
         marcado como 1 no array.
     */
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < 9; i++)
+    {
         int n = linha[i] - '0';
-        if (n < 1 || array[n - 1] == 1) {
+        if (n < 1 || array[n - 1] == 1)
+        {
             return false;
         }
         else
             array[n - 1] = 1;
     }
-    return true
+    return true;
 }
 
 string slice_line(string tentativa, int group, char type)
@@ -99,7 +103,21 @@ bool validateSudoku(string tentativa)
         }
 
         string parte = slice_line(tentativa, j % 9, type);
-        if (!validate(parte, type))
+        if (!verifica_linha(parte))
+        {
+            cout << "INVALIDO!!\n\tTipo: " << type << "\n\tNúmero: " << j % 9;
+            return false;
+        }
+    }
+    return true;
+}
+
+bool validatePart(string total, char type)
+{
+    for (int j = 0; j < 9; j++)
+    {
+        string parte = slice_line(total, j, type);
+        if (!verifica_linha(parte))
         {
             cout << "INVALIDO!!\n\tTipo: " << type << "\n\tNúmero: " << j % 9;
             return false;
@@ -122,11 +140,17 @@ int main()
     cout << "\nOperação terminada em " << duracao << "s\n";
     cout << "O jogo mostrado é " << validez;
 
-    /*
-        Sugestões de comparações e números de threads:
-        - 3 threads, um para cada tipo de string (linhas, colunas, quadrantes) --> 9 operações para cada thread
-        - 27 threads, uma operação apenas para cada string
-    */
+    // 3 threads
+    ini = clock();
+    std::future<bool> thread_linha = std::async(&validatePart, sudoku, 'l');
+    std::future<bool> thread_coluna = std::async(&validatePart, sudoku, 'c');
+    std::future<bool> thread_quadrante = std::async(&validatePart, sudoku, 'q');
+    fim = clock() - ini;
+    duracao = float(fim) / CLOCKS_PER_SEC;
+    validez = thread_linha.get() && thread_coluna.get() && thread_quadrante.get(); // Incluir o get dentro do cronometro acrescenta +0.0004s
+
+    cout << "\n\nOperação com 3 threads terminada em " << duracao << "s\n";
+    cout << "O jogo mostrado é " << validez << '\n';
 
     return 0;
 }
