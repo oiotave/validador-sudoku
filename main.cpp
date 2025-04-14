@@ -6,16 +6,31 @@
 using namespace std;
 
 // Verifica se um jogo passado e valido
-bool validate(string linhaTentativa, char type)
-{
-    cout << linhaTentativa << "\tTipo: " << type << "\n";
+bool verifica_linha(string linha) {
+    /*
+        Esse array funciona como um hash;
+        a posicao n indica que o o numero n + 1 nao esta nele
+        se for igual a 0 ou que esta nele se for igual a 1.
+    */
+    int array[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    for (int j = 0; j < 9; j++)
-    {
-        if (linhaTentativa.find(linhaTentativa[j]) != linhaTentativa.rfind(linhaTentativa[j]))
+    /*
+        Loop logico principal;
+        para cada posicao na linha recebida, ele verifica se o valor
+        e valido e se a sua posicao no hash ja esta marcada como 1,
+        o que indicaria que o numero ja foi lido;
+        se algum numero novo nao tiver sido lido ainda, ele sera
+        marcado como 1 no array.
+    */
+    for (int i = 0; i < 9; i++) {
+        int n = matriz[linha][i] - '0';
+        if (n < 1 || n > 9 || array[n - 1] == 1) {
             return false;
+        }
+        else
+            array[n - 1] = 1;
     }
-    return true;
+    return true
 }
 
 string slice_line(string tentativa, int group, char type)
