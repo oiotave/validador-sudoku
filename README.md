@@ -1,5 +1,5 @@
 ### Introdução
-***
+
 A seguinte implementanção é referente ao projeto final da disciplina de Sistemas Operacionais
 da Universidade Federal da Paraíba (UFPB). Seu objetivo é apresentar uma análise sobre o uso de threads
 em um algoritmo de validação de jogos de sudoku, escrito em C++. A implementação foi efetuado pelos seguintes
@@ -10,7 +10,7 @@ discente de Ciência da Computação:
 * [Josué Guedes Ferreira](https://github.com/JosueGuedes)
 
 ### Instruções de compilação
-***
+
 O código acima, por exigir o uso da biblioteca "<threads.h>", só pode ser compilada nativamente
 em sistemas operacionais que suportam POSIX (Unix, Linux ou MacOS). Para o desenvolvimento do projeto,
 foi usado o Ubuntu, baseado em Linux. Portanto, para esse sistema, os comandos de compilação e
@@ -20,7 +20,7 @@ execução seguem abaixo:
     ./sudoku-val
 
 ### Notas
-***
+
 Além do arquivo principal, consta no projeto uma pasta de arquivos txt com variados jogos de sudoku resolvidos.
 Alguns deles são soluções válidas, mas outras não, como propósito de teste. Soluções inválidas estão nomeadas com
 o padrão "inv_sudoku".
