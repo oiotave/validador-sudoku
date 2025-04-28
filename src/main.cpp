@@ -8,6 +8,19 @@
 
 using namespace std;
 
+//  PARAMETROS PASSADOS PARA AS THREADS
+    typedef struct tParams {
+        string sudoku;
+        int    head;
+        int    tail;
+    } params;
+
+//  VARIAVEIS GLOBAIS
+    string sudoku_erros(81, '0');       // Armazena as posições que invalidam um jogo de sudoku
+    char   types[3] = {'l', 'c', 'q'};  // Armazena os tipos de cada parte (linha, coluna, quadrante)
+    int    types_ctrl;                  // Controle para acessar os índices do array de tipos
+
+// FUNCOES DO CODIGO    
 void    modifica_sudoku_erros(int, int, char);
 bool    verifica_linha(string, int, char);
 string  slice_line(string, int, char);
@@ -15,18 +28,9 @@ bool    validate_sudoku(string);
 void*   validate_part(void*);
 void    printar_sudoku(string);
 string  ler_arquivo(string); 
-
- // Struct que guarda os parametros passados para as threads
-    typedef struct params {
-        string sudoku;
-        int    head;
-        int    tail;
-    } params;
-
- // Variaveis globais
-    string sudoku_erros(81, '0');       // Armazena as posições que invalidam um jogo de sudoku
-    char   types[3] = {'l', 'c', 'q'};  // Armazena os tipos de cada parte (linha, coluna, quadrante)
-    int    types_ctrl;                  // Controle para acessar os índices do array de tipos
+bool    single_thread(params);
+bool    multithreads(params, int);
+void    menu();
 
 int main() {
     string caminho;
@@ -39,152 +43,182 @@ int main() {
 
         params.sudoku = ler_arquivo(caminho);
     }
-
-    cout << "\nSeu sudoku: " << endl << endl;
     printar_sudoku(params.sudoku);
 
-    // RESOLUCAO SINGLE THREAD/PROCESS
+    bool validez;
+    int  escolha;
 
+    while(true) {
+        menu();
+        cout << "\nEscolha uma forma de resolucao: ";
+        cin  >> escolha;
+
+        switch(escolha) {
+            case 1:     validez = single_thread(params); break;
+            case 2:     validez = multithreads(params, 3); break;
+            case 3:     validez = multithreads(params, 9); break;
+            case 4:     validez = multithreads(params, 27); break;
+            case 0:     exit(0);
+            
+            default: break;
+        }
+
+        if(!validez) {
+            cout << "Os erros no sudoku escolhido:" << endl << endl;
+            printar_sudoku(sudoku_erros);
+        }
+    }
+    return 0;
+}
+
+/**
+ *  Inicia a validação com uma única thread
+ * 
+ *  @param param Struct com os parâmetros de cada thread
+ *  @return 'Verdadeiro' se for um sudoku válido, 'falso' caso contrário
+ */
+bool single_thread(params param) {
     clock_t ini = clock();
-    
-    bool validez = validate_sudoku(params.sudoku);
 
+    bool validez = validate_sudoku(param.sudoku);
+    
     clock_t fim = clock() - ini;
 
-    cout << "O jogo mostrado é " << (validez ? "valido" : "invalido") << endl << endl;
-
+    cout << "\nO jogo mostrado é " << (validez ? "valido" : "invalido") << endl;
     cout << "Operacao com 1 thread terminada em " <<((long double) fim / CLOCKS_PER_SEC) << " segundos" << endl << endl;
 
-    // RESOLUCAO COM TRES THREADS
+    return validez;
+}
 
-    params.head = 0; // Cada thread processara uma parte especifica
-    params.tail = 8;
-
+/**
+ *  Inicia a validação com uma várias threads
+ * 
+ *  @param param Struct com os parâmetros de cada thread
+ *  @param qtd Quantidade de threads (3, 9, 27)
+ *  @return 'Verdadeiro' se for um sudoku válido, 'falso' caso contrário
+ */
+bool multithreads(params param, int qtd) {
+    clock_t ini, fim;
     vector<pthread_t> threads; // Vetor para guardar as threads
-    threads.reserve(3);
-
-    bool *resultado;
-
-    ini = clock();
     
-    for(int i = 0; i < 3; i++) {
-        types_ctrl = i; // Altera o controle, mudando o tipo que sera acessado
+    bool validez = true;
+    bool *resultado; // Guarda o resultado de cada thread
 
-        pthread_create(&threads[i], NULL, validate_part, (void*) &params);
-    }
-
-    for(int j = 0; j < 3; j++) {
-        pthread_join(threads[j], (void**) &resultado);
-
-        validez = validez && *resultado; // Verifica a validez de cada analise
-
-        if(!validez) {
-            free(resultado);
-            break;
-        }
-
-        free(resultado);
-    }
-
-    fim = clock() - ini;
-
-    cout << "Operacao com 3 threads terminada em " << ((long double) fim / CLOCKS_PER_SEC) << " segundos" << endl << endl;
-
-    threads.clear();
-
-    // RESOLUCAO COM NOVE THREADS
-
-    threads.reserve(9);
-
-    ini = clock();
-    
-    for(int i = 0; i < 9; i++) {
-        params.head = (i % 3) * 3; // Cada thread processara um terco de cada uma das partes
-        params.tail = (i % 3) * 3 + 2;
+    switch(qtd) {
+        case 3:
+            param.head = 0; // Cada thread processara uma das partes do sudoku (linha, coluna ou quadrante)
+            param.tail = 8;
         
-        if(i < 3) { // Threads que verificarao cada conjunto de tres linhas
-            types_ctrl = 0;
-            pthread_create(&threads[i], NULL, validate_part, (void*) &params);
-        }
-        else if(i >= 3 && i < 6) { // Threads que verificarao cada conjunto de tres colunas
-            types_ctrl = 1;
-            pthread_create(&threads[i], NULL, validate_part, (void*) &params);
-        }
-        else { // Threads que verificarao cada conjunto de tres quadrantes
-            types_ctrl = 2;
-            pthread_create(&threads[i], NULL, validate_part, (void*) &params);
-        }
-    }
-
-    for(int j = 0; j < 9; j++) {
-        pthread_join(threads[j], (void**) &resultado);
-
-        validez = validez && *resultado;
-
-        if(!validez) {
-            free(resultado);
-            break;
-        }
-
-        free(resultado);
-    }
-
-    fim = clock() - ini;
-
-    cout << "Operacao com 9 threads terminada em " << ((long double) fim / CLOCKS_PER_SEC) << " segundos" << endl << endl;
-
-    threads.clear();
-
-    // RESOLUCAO COM VINTE E SETE THREADS
-
-    threads.reserve(27);
-
-    ini = clock();
-    
-    for(int i = 0; i < 27; i++) {
-        params.head = (i % 9); // Cada thread processara uma unidade de cada parte
-        params.tail = params.head;
+            threads.reserve(3);
         
-        if(i < 9) { // Threads que verificarao cada uma das linhas
-            types_ctrl = 0;
-            pthread_create(&threads[i], NULL, validate_part, (void*) &params);
-        }
-        else if(i >= 9 && i < 18) { // Threads que verificarao cada uma das colunas
-            types_ctrl = 1;
-            pthread_create(&threads[i], NULL, validate_part, (void*) &params);
-        }
-        else { // Threads que verificarao cada um dos quadrantes
-            types_ctrl = 2;
-            pthread_create(&threads[i], NULL, validate_part, (void*) &params);
-        }
-    }
-
-    for(int j = 0; j < 27; j++) {
-        pthread_join(threads[j], (void**) &resultado);
-
-        validez = validez && *resultado;
-
-        if(!validez) {
-            free(resultado);
+            ini = clock();
+        
+            // Cria as threads
+            for(int i = 0; i < 3; i++) {
+                types_ctrl = i; // Altera o controle, mudando o tipo que sera acessado
+            
+                pthread_create(&threads[i], NULL, validate_part, (void*) &param);
+            }
+            
+            for(int j = 0; j < 3; j++) {
+                pthread_join(threads[j], (void**) &resultado);
+            
+                validez = validez && *resultado; // Verifica a validez de cada analise
+            
+                if(!validez) {
+                    free(resultado);
+                    break;
+                }
+                free(resultado);
+            }
+            fim = clock() - ini;
+                        
+            threads.clear();
             break;
-        }
 
-        free(resultado);
+        case 9:
+            threads.reserve(9);
+
+            ini = clock();
+
+            for(int i = 0; i < 9; i++) {
+                param.head = (i % 3) * 3; // Cada thread processara um terco de cada uma das partes
+                param.tail = (i % 3) * 3 + 2;
+                
+                if(i < 3) { // Threads que verificarao cada conjunto de tres linhas
+                    types_ctrl = 0;
+                    pthread_create(&threads[i], NULL, validate_part, (void*) &param);
+                }
+                else if(i >= 3 && i < 6) { // Threads que verificarao cada conjunto de tres colunas
+                    types_ctrl = 1;
+                    pthread_create(&threads[i], NULL, validate_part, (void*) &param);
+                }
+                else { // Threads que verificarao cada conjunto de tres quadrantes
+                    types_ctrl = 2;
+                    pthread_create(&threads[i], NULL, validate_part, (void*) &param);
+                }
+            }
+
+            for(int j = 0; j < 9; j++) {
+                pthread_join(threads[j], (void**) &resultado);
+ 
+                validez = validez && *resultado;
+
+                if(!validez) {
+                    free(resultado);
+                    break;
+                }
+                free(resultado);
+            }
+            fim = clock() - ini;
+
+            threads.clear();
+            break;
+
+        case 27:
+            threads.reserve(27);
+
+            ini = clock();
+            
+            for(int i = 0; i < 27; i++) {
+                param.head = (i % 9); // Cada thread processara uma unidade de cada parte
+                param.tail = param.head;
+                
+                if(i < 9) { // Threads que verificarao cada uma das linhas
+                    types_ctrl = 0;
+                    pthread_create(&threads[i], NULL, validate_part, (void*) &param);
+                }
+                else if(i >= 9 && i < 18) { // Threads que verificarao cada uma das colunas
+                    types_ctrl = 1;
+                    pthread_create(&threads[i], NULL, validate_part, (void*) &param);
+                }
+                else { // Threads que verificarao cada um dos quadrantes
+                    types_ctrl = 2;
+                    pthread_create(&threads[i], NULL, validate_part, (void*) &param);
+                }
+            }
+            
+            for(int j = 0; j < 27; j++) {
+                pthread_join(threads[j], (void**) &resultado);
+            
+                validez = validez && *resultado;
+            
+                if(!validez) {
+                    free(resultado);
+                    break;
+                }
+                free(resultado);
+            }
+            fim = clock() - ini;
+            
+            threads.clear();
+            break;
+        
+        default: break;
     }
-
-    fim = clock() - ini;
-
-    cout << "Operacao com 27 threads terminada em " << ((long double) fim / CLOCKS_PER_SEC) << " segundos" << endl << endl;
-
-    threads.clear();
-
-    // Mostra os numeros que causaram invalidez no jogo passado
-    if(!validez) {
-        cout << "Os erros no sudoku escolhido:" << endl << endl;
-        printar_sudoku(sudoku_erros);
-    }
-
-    return 0;
+    cout << "\nO jogo mostrado é " << (validez ? "valido" : "invalido") << endl;
+    cout << "Operacao com " << qtd << " threads terminada em " << ((long double) fim / CLOCKS_PER_SEC) << " segundos" << endl << endl;
+    return validez;
 }
 
 /**
@@ -299,16 +333,17 @@ string slice_line(string tentativa, int group, char type) {
  *  @note Usado apenas para simulação single-thread
  */
 bool validate_sudoku(string tentativa) {
-    char type = 'l';
+    types_ctrl = 0;
     
     for(int j = 0; j < 27; j++) {
-        if(j >= 9 && j <= 17) type = 'c';
         
-        else if(j > 17) type = 'q';
+        if(j > 8 && j < 18) types_ctrl = 1;
+        
+        else if(j > 17) types_ctrl = 2;
 
-        string parte = slice_line(tentativa, j % 9, type);
+        string parte = slice_line(tentativa, j % 9, types[types_ctrl]);
         
-        if(!verifica_linha(parte, j % 9, type)) return false;
+        if(!verifica_linha(parte, j % 9, types[types_ctrl])) return false;
     }
     return true;
 }
@@ -328,10 +363,9 @@ void* validate_part(void* thread_params) {
 
     for(int i = p->head; i <= p->tail; i++) {
         string parte = slice_line(p->sudoku, i, types[types_ctrl]);
-        
+
         *retorno = *retorno && verifica_linha(parte, i, types[types_ctrl]);
     }
-
     pthread_exit((void*) retorno);
 }
 
@@ -341,6 +375,7 @@ void* validate_part(void* thread_params) {
  *  @param sudoku String que contém os números do jogo
  */
 void printar_sudoku(string sudoku) {
+    cout << "\n";
     for(int i = 1; i <= 81; i++) {
         cout << sudoku[i - 1] << " ";
         
@@ -351,9 +386,9 @@ void printar_sudoku(string sudoku) {
             
             if((i % 27 == 0) && (i != 81)) {
                 for(int j = 0; j < 22; j++) {
-                    if((i % 3 == 0) && (i % 9 != 0)) cout << " _";
+                    if((i % 3 == 0) && (i % 9 != 0)) cout << " -";
                     
-                    else cout << "_";
+                    else cout << "-";
                 }
             cout << endl;
             }
@@ -379,7 +414,7 @@ string ler_arquivo(string caminho) {
         char caractere;
 
         while(arquivo.get(caractere)) {
-            if(caractere < 49 || caractere > 57) continue;
+            if(caractere < 49 || caractere > 57) continue; // Ignora caracteres que não são números
             sudoku += caractere;
         }
         arquivo.close();
@@ -387,4 +422,12 @@ string ler_arquivo(string caminho) {
         return sudoku;
     }
     return "";
+}
+
+void menu() {
+    cout << "(1)    Uma thread apenas" << endl;
+    cout << "(2)    Três threads" << endl;
+    cout << "(3)    Nove threads" << endl;
+    cout << "(4)    Vinte e sete threads" << endl;
+    cout << "(0)    Encerrar" << endl;
 }
