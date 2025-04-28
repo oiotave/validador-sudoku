@@ -5,7 +5,7 @@ da Universidade Federal da Paraíba (UFPB). Seu objetivo é apresentar uma anál
 em um algoritmo de validação de jogos de sudoku, escrito em C++. A implementação foi efetuado pelos seguintes
 discente de Ciência da Computação:
 
-* [Davi de Lacerda Teixeira](https://github.com/DavideLacerdaT) - responsável pela implementação das threads e da lógica de leitura de linha além de idenfitifação dos erros;
+* [Davi de Lacerda Teixeira](https://github.com/DavideLacerdaT) - responsável pela implementação das threads e da lógica de leitura de linha além de identificação dos erros;
 * [João Victor Fernandes da Silveira](https://github.com/oiotave) - responsável pela implementação das threads e das funções de análise das threads;
 * [Josué Guedes Ferreira](https://github.com/JosueGuedes) - responsável pela implementação da lógica de partição do sudoku e da organização das threads.
 
