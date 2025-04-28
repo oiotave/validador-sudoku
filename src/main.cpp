@@ -217,7 +217,7 @@ bool multithreads(params param, int qtd) {
         default: break;
     }
     cout << "\nO jogo mostrado é " << (validez ? "valido" : "invalido") << endl;
-    cout << "Operacao com " << qtd << " threads terminada em " << ((long double) fim / CLOCKS_PER_SEC) << " segundos" << endl;
+    cout << "Operacao com " << qtd << " threads terminada em " << ((long double) fim / CLOCKS_PER_SEC) << " segundos" << endl << endl;
     return validez;
 }
 
