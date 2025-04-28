@@ -16,8 +16,8 @@ em sistemas operacionais que suportam POSIX (Unix, Linux ou MacOS). Para o desen
 foi usado o Ubuntu, baseado em Linux. Portanto, para esse sistema, os comandos de compilação e
 execução seguem abaixo:
 
-    g++ main.cpp -o sudoku-val
-    ./sudoku-val
+    g++ main.cpp -o sudoku
+    ./sudoku
 
 ### Notas
 
