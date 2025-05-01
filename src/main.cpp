@@ -35,12 +35,11 @@ void    menu();
 int main() {
     string caminho;
     params params;
-
+    
     // Le o arquivo com o jogo de sudoku
     while(params.sudoku == "") {
         cout << "\nDigite o arquivo com o sudoku: ";
         cin  >> caminho;
-
         params.sudoku = ler_arquivo(caminho);
     }
     printar_sudoku(params.sudoku);
@@ -54,15 +53,14 @@ int main() {
         cin  >> escolha;
 
         switch(escolha) {
-            case 1:     validez = single_thread(params); break;
-            case 2:     validez = multithreads(params, 3); break;
-            case 3:     validez = multithreads(params, 9); break;
-            case 4:     validez = multithreads(params, 27); break;
-            case 0:     exit(0);
-            
+            case 1: validez = single_thread(params); break;
+            case 2: validez = multithreads(params, 3); break;
+            case 3: validez = multithreads(params, 9); break;
+            case 4: validez = multithreads(params, 27); break;
+            case 0: exit(0);
+
             default: break;
         }
-
         if(!validez) {
             cout << "Os erros no sudoku escolhido:" << endl << endl;
             printar_sudoku(sudoku_erros);
@@ -116,13 +114,11 @@ bool multithreads(params param, int qtd) {
             // Cria as threads
             for(int i = 0; i < 3; i++) {
                 types_ctrl = i; // Altera o controle, mudando o tipo que sera acessado
-            
                 pthread_create(&threads[i], NULL, validate_part, (void*) &param);
             }
             
             for(int j = 0; j < 3; j++) {
                 pthread_join(threads[j], (void**) &resultado);
-            
                 validez = validez && *resultado; // Verifica a validez de cada analise
             
                 if(!validez) {
@@ -158,10 +154,8 @@ bool multithreads(params param, int qtd) {
                     pthread_create(&threads[i], NULL, validate_part, (void*) &param);
                 }
             }
-
             for(int j = 0; j < 9; j++) {
                 pthread_join(threads[j], (void**) &resultado);
- 
                 validez = validez && *resultado;
 
                 if(!validez) {
@@ -197,7 +191,6 @@ bool multithreads(params param, int qtd) {
                     pthread_create(&threads[i], NULL, validate_part, (void*) &param);
                 }
             }
-            
             for(int j = 0; j < 27; j++) {
                 pthread_join(threads[j], (void**) &resultado);
             
@@ -232,9 +225,7 @@ bool multithreads(params param, int qtd) {
  */
 void modifica_sudoku_erros(int numero, int i, int j, char tipo) {
     if(tipo == 'l') sudoku_erros[j * 9 + i] = numero + '0';
-    
     if(tipo == 'c') sudoku_erros[i * 9 + j] = numero + '0';
-    
     if(tipo == 'q') sudoku_erros[((j / 3) * 27) + ((j % 3) * 3) + ((i / 3) * 9) + (i % 3)] = numero + '0';
 }
 
@@ -270,7 +261,6 @@ bool verifica_linha(string linha, int coord, char tipo) {
         else
             array[n - 1] = i + 1;
     }
-
     int flag = 1;
     
     for(int i = 0; i < 9; i++) if(!array[i]) flag = 0;
@@ -320,7 +310,6 @@ string slice_line(string tentativa, int group, char type) {
         default:
             break;
     }
-
     return resultado;
 }
 
@@ -418,7 +407,6 @@ string ler_arquivo(string caminho) {
             sudoku += caractere;
         }
         arquivo.close();
-
         return sudoku;
     }
     return "";
