@@ -17,4 +17,4 @@ Por usar comando da biblioteca ```pthreads.h```, o código acima só pode ser co
 2. Executar: ```./sudoku```
 
 ## Notas
-Além do arquivo principal, consta no projeto uma pasta de arquivos txt com variados jogos de sudoku resolvidos. Alguns deles são soluções válidas, mas outras não, com propósito de teste. Soluções inválidas estão nomeadas com o padrão ```inv_sudoku```.
+Além do arquivo principal, consta no projeto uma pasta de arquivos txt com variados jogos de sudoku resolvidos. Alguns deles são soluções válidas, mas outras não, com propósito de teste. Soluções inválidas estão nomeadas com o padrão ```invalid```.
