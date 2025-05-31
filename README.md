@@ -13,7 +13,7 @@ O desenvolvimento do código ficou sob responsabilidade dos seguintes alunos: [D
 
 ## Instruções de compilação
 Por usar comando da biblioteca ```pthreads.h```, o código acima só pode ser compilado e executado em sistemas operacionais como Linux e MacOS. Para usuários de Windows, é necessária a instalação de algum subsistema (como WSL para Linux) para a execução correta. Uma vez que tal requisito esteja garantido, pode-se compilar e executar o código da seguinte forma:
-1. Compilar: ```g++ main.cpp -o sudoku```
+1. Compilar: ```g++ main.cpp sudoku.cpp -o sudoku```
 2. Executar: ```./sudoku```
 
 ## Notas
