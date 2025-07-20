@@ -1,7 +1,7 @@
 # Validador de Sudoku
 
 ## Introdução
-A seguinte implementação foi apresentada como projeto final da disciplina de Sistemas Operacionais, na Universidade Federal da Paraíba (UFPB). Desenvolvido em C++, o código faz uma análise simples de velocidade e desempenho de um algoritmo de validação de jogos de Sudoku, usando multithreading por meio da biblioteca ```pthread```.
+A seguinte implementação foi apresentada como projeto final da disciplina de Sistemas Operacionais, na Universidade Federal da Paraíba. Desenvolvido em C++, o código faz uma análise simples de velocidade e desempenho de um algoritmo de validação de jogos de Sudoku, usando multithreading por meio da biblioteca ```pthread```.
 
 ## Colaboradores
 O desenvolvimento do código ficou sob responsabilidade dos seguintes alunos: [Davi de Lacerda Teixeira](https://github.com/DavideLacerdaT), [João Victor Fernandes da Silveira](https://github.com/oiotave) e [Josué Guedes Ferreira](https://github.com/JosueGuedes).
@@ -12,7 +12,7 @@ O desenvolvimento do código ficou sob responsabilidade dos seguintes alunos: [D
 * **Josué**: responsável pela implementação da lógica de partição do sudoku e da organização das threads.
 
 ## Instruções de compilação
-Por usar comando da biblioteca ```pthreads.h```, o código acima só pode ser compilado e executado em sistemas operacionais como Linux e MacOS. Para usuários de Windows, é necessária a instalação de algum subsistema (como WSL para Linux) para a execução correta. Uma vez que tal requisito esteja garantido, pode-se compilar e executar o código da seguinte forma:
+Por usar os comandos da biblioteca ```pthreads.h```, o código acima só pode ser compilado e executado em sistemas operacionais como Linux e MacOS. Para usuários de Windows, é necessária a instalação de algum subsistema (como WSL para Linux) para a execução correta. Uma vez que tal requisito esteja garantido, pode-se compilar e executar o código da seguinte forma:
 1. Compilar: ```g++ main.cpp sudoku.cpp -o sudoku```
 2. Executar: ```./sudoku```
 
