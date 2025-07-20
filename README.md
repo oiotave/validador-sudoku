@@ -1,7 +1,7 @@
 # Validador de Sudoku
 
 ## Introdução
-A seguinte implementação foi apresentada como projeto final da disciplina de Sistemas Operacionais, na Universidade Federal da Paraíba (UFPB). Desenvolvido em C++, o código faz uma análise simples de velocidade e desempenho de um algoritmo de validação de jogos de Sudoku, usando multithreading por meio da biblioteca ```pthreads.h```.
+A seguinte implementação foi apresentada como projeto final da disciplina de Sistemas Operacionais, na Universidade Federal da Paraíba (UFPB). Desenvolvido em C++, o código faz uma análise simples de velocidade e desempenho de um algoritmo de validação de jogos de Sudoku, usando multithreading por meio da biblioteca ```pthread```.
 
 ## Colaboradores
 O desenvolvimento do código ficou sob responsabilidade dos seguintes alunos: [Davi de Lacerda Teixeira](https://github.com/DavideLacerdaT), [João Victor Fernandes da Silveira](https://github.com/oiotave) e [Josué Guedes Ferreira](https://github.com/JosueGuedes).
