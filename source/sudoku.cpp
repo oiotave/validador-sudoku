@@ -42,7 +42,7 @@ void Sudoku::print() {
                     
                     else cout << "-";
                 }
-            cout << endl;
+                cout << endl;
             }
         }
     }
@@ -65,7 +65,7 @@ void Sudoku::print(string jogo) {
                     
                     else cout << "-";
                 }
-            cout << endl;
+                cout << endl;
             }
         }
     }
@@ -103,7 +103,6 @@ string Sudoku::slice_line(string jogo, int group, char type) {
 
             for(int j = 0; j < 9; j++) {
                 resultado += jogo[group + j];
-                
                 if(j % 3 == 2) group += 6;
             }
             break;
