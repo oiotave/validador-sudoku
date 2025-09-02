@@ -23,7 +23,6 @@ void    menu();
 
 int main() {
     string caminho;
-    
     cout << "\nDigite o arquivo com o sudoku: ";
     cin  >> caminho;
 
@@ -33,7 +32,6 @@ int main() {
     while(sudoku.jogo == "") {
         cout << "\nDigite um arquivo valido: ";
         cin  >> caminho;
-
         sudoku.caminho = caminho;
         sudoku.ler_arquivo();
     }
@@ -71,14 +69,11 @@ int main() {
  */
 bool single_thread(Sudoku param) {
     clock_t ini = clock();
-
     bool validez = validate_sudoku(param);
-    
     clock_t fim = clock() - ini;
 
     cout << "\nO jogo mostrado é " << (validez ? "valido" : "invalido") << endl;
     cout << "Operacao com 1 thread terminada em " << ((long double) fim / CLOCKS_PER_SEC) << " segundos" << endl << endl;
-
     return validez;
 }
 
@@ -100,9 +95,8 @@ bool multithreads(Sudoku param, int qtd) {
     case 3:
         param.head = 0; // Cada thread processara uma das partes do sudoku (linha, coluna ou quadrante)
         param.tail = 8;
-
         threads.reserve(3);
-
+        
         ini = clock();
 
         // Cria as threads
@@ -120,14 +114,12 @@ bool multithreads(Sudoku param, int qtd) {
             }
             free(resultado);
         }
-        fim = clock() - ini;
-                    
+        fim = clock() - ini;      
         threads.clear();
         break;
 
     case 9:
         threads.reserve(9);
-
         ini = clock();
 
         for(int i = 0; i < 9; i++) {
@@ -158,13 +150,11 @@ bool multithreads(Sudoku param, int qtd) {
             free(resultado);
         }
         fim = clock() - ini;
-
         threads.clear();
         break;
 
     case 27:
         threads.reserve(27);
-
         ini = clock();
         
         for(int i = 0; i < 27; i++) {
@@ -186,7 +176,6 @@ bool multithreads(Sudoku param, int qtd) {
         }
         for(int j = 0; j < 27; j++) {
             pthread_join(threads[j], (void**) &resultado);
-        
             validez = validez && *resultado;
         
             if(!validez) {
@@ -196,7 +185,6 @@ bool multithreads(Sudoku param, int qtd) {
             free(resultado);
         }
         fim = clock() - ini;
-        
         threads.clear();
         break;
 
@@ -248,18 +236,15 @@ bool verifica_linha(string linha, int coord, char tipo) {
         
         if(n < 1 || array[n - 1] > 0) {
             modifica_sudoku_erros(n, i, coord, tipo);
-
             modifica_sudoku_erros(n, array[n - 1] - 1, coord, tipo);
         }
-        else
-            array[n - 1] = i + 1;
+        else array[n - 1] = i + 1;
     }
     int flag = 1;
     
     for(int i = 0; i < 9; i++) if(!array[i]) flag = 0;
 
     if(!flag) return false;
-    
     return true;
 }
 
@@ -278,7 +263,6 @@ bool validate_sudoku(Sudoku param) {
         if(i > 8 && i < 18) types_ctrl = 1;
         
         else if(i > 17) types_ctrl = 2;
-
         string parte = Sudoku::slice_line(param.jogo, i % 9, types[types_ctrl]);
         
         if(!verifica_linha(parte, i % 9, types[types_ctrl])) return false;
@@ -294,13 +278,11 @@ bool validate_sudoku(Sudoku param) {
  */
 void* validate_part(void* thread_params) {
     Sudoku* p = (Sudoku*) thread_params;
-    
     bool* retorno = (bool*) malloc(sizeof(bool));
+    
     *retorno = true;
-
     for(int i = p->head; i <= p->tail; i++) {
         string parte = Sudoku::slice_line(p->jogo, i, types[types_ctrl]);
-
         *retorno = *retorno && verifica_linha(parte, i, types[types_ctrl]);
     }
     pthread_exit((void*) retorno);
@@ -313,3 +295,4 @@ void menu() {
     cout << "(4)    Vinte e sete threads" << endl;
     cout << "(0)    Encerrar" << endl;
 }
+
