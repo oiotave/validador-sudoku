@@ -279,8 +279,8 @@ bool validate_sudoku(Sudoku param) {
 void* validate_part(void* thread_params) {
     Sudoku* p = (Sudoku*) thread_params;
     bool* retorno = (bool*) malloc(sizeof(bool));
-    
     *retorno = true;
+
     for(int i = p->head; i <= p->tail; i++) {
         string parte = Sudoku::slice_line(p->jogo, i, types[types_ctrl]);
         *retorno = *retorno && verifica_linha(parte, i, types[types_ctrl]);
@@ -295,4 +295,5 @@ void menu() {
     cout << "(4)    Vinte e sete threads" << endl;
     cout << "(0)    Encerrar" << endl;
 }
+
 
